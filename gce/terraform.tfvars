@@ -18,5 +18,4 @@ count_agent_worker_nodes = "0"
 docker_version_server = "18.06"
 # Docker version of host being added to a cluster (running `rancher/rancher-agent`)
 docker_version_agent = "18.06"
-# SSH username for login
-sshname = "yourname"
+

@@ -3,14 +3,6 @@ provider "google" {
   project     = "${var.project}"
   region      = "${var.region}"
 }
-variable "username" {
-  description = "Your username used for SSH"
-  default     = "yourname"
-}
-variable "sshname" {
-  description = "Your username used for SSH"
-  default     = "name from ssh key for Gcloud login"
-}
 variable "region" {
   description = "Region of GCE resources"
   default     = "us-central1"
@@ -21,9 +13,10 @@ variable "region_zone" {
   default     = "us-central1-a"
 }
 
+# Change name of project to one that you have either created or have already
 variable "project" {
 	 description = "Name of GCE project"
-   default     = "yourlab"
+   default     = "yourproject"
 }
 
 variable "machine_type" {
@@ -35,20 +28,12 @@ variable "image" {
 	default		  = "ubuntu-os-cloud/ubuntu-1804-bionic-v20190212a"
 }
 
+# You will need to create this json file via a Google Service account - export the service account key and rename as below
 variable "credentials_file_path" {
   description = "Path to the JSON file used to describe your account credentials - service account"
   default     = "terraform.json"
 }
-
-variable "public_key_path" {
-  description = "Path to file containing public key"
-  default     = "~/.ssh/id_rsa.pub"
-}
-
-variable "private_key_path" {
-  description = "Path to file containing private key"
-  default     = "~/.ssh/id_rsa.pub"
-}
+#Below is so we don't get any naming issues - change to anything you like
 variable "prefix" {
   default = "yourname"
 }
@@ -101,7 +86,7 @@ data "template_file" "userdata_agent" {
   }
 }
 resource "google_compute_firewall" "default" {
-  name    = "rancher-firewall"
+  name    = "rancher-firewall-quikstart"
   network = "default"
 
   allow {
@@ -109,22 +94,20 @@ resource "google_compute_firewall" "default" {
     ports    = ["80","443"]
   }
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = ["rancher-node"]
+  target_tags   = ["rancher-fw-quikstart"]
 }
 resource "google_compute_instance" "rancherserver" {
   name = "${var.prefix}-rancherserver"
   machine_type = "${var.machine_type}" 
   zone         = "${var.region_zone}"
-  tags         = ["rancher-node"]
+  tags         = ["rancher-fw-quikstart"]
   boot_disk {
     initialize_params {
        image = "${var.image}" // the operative system (and Linux flavour) that your machine will run
        size  = 100
     }
   }
-
   metadata {
-    ssh-keys = "${var.sshname}:${file("${var.public_key_path}")}"
     startup-script = "${data.template_file.userdata_server.rendered}"
   }
   network_interface {
@@ -134,21 +117,18 @@ resource "google_compute_instance" "rancherserver" {
     }
   }
 }
-
 resource "google_compute_instance" "rancheragent-all" {
   name = "${var.prefix}-rancheragent-1-all"
   machine_type = "${var.machine_type}" 
   zone         = "${var.region_zone}"
-  tags         = ["rancher-node"]
+  tags         = ["rancher-fw-quikstart"]
   boot_disk {
     initialize_params {
        image = "${var.image}" // the operative system (and Linux flavour) that your machine will run
        size  = 100
     }
   }
-
   metadata {
-    ssh-keys = "${var.username}:${file("${var.public_key_path}")}"
     startup-script = "${data.template_file.userdata_agent.rendered}"
   }
   network_interface {
