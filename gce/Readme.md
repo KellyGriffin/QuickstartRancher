@@ -7,28 +7,27 @@
 ## Assumptions
 * Defalt network will be used
 * A GCE project has been created and will be used
+  * To get the ID of a project, click on the projects dropdown at the top of the GCP page. A modal will appear with the ID of your projects listed. 
 
 ## One time setup steps
-* Clone this repo
-* Modify variables.tf file as necessary with:
-    * Username for SSH
+1. Clone this repo and go into the azure subfolder
+1.  Modify terraform.tfvars file as necessary with:
+    * Admin password for Rancher server instance
     * Path to JSON File you will create below (Credentials)
-    * Path to Private and Public keys for Authentication
     * Project Name
     * Confirm the location and zone are correct as they default to US Central
 
-> Create Service Account for JSON Files (Credentials required in variables.tf file)
-* Select IAM and Admin
-* Click Service Accounts on the left side pane 
-* Click Create Service Account 
-* Provide Name as "terraform" Role as Project owner, select "Create a key" - choose JSON
-* Click Create, this will download a JSON file. 
-* Copy this JSON file to credentials folder and rename it as terraform.json
-* If required - create public and private keys - instructions can be found [here](hhttps://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys) under Create a New SSH Key
+2. Create Service Account for JSON File
+   1. Select IAM and Admin
+   2. Click Service Accounts on the left side pane 
+   3. Click Create Service Account 
+      1. Provide Name as "terraform" and click Create 
+      2. Select Project -> Owner as role from the dropdown, and click Continue
+      3. Click on Create Key and download the JSON file
+   4. Copy this JSON file to credentials folder and **rename it as terraform.json**
+   5. If required - create public and private keys - instructions can be found [here](hhttps://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys) under Create a New SSH Key
 
-### How to use
-- Clone this repository and go into the azure subfolder
-- Modify the files `terraform.tfvars` and `main.tf` and edit (see inline explanation)
+## How to use
 - Run `terraform init`
 - Run `terraform plan`
 - Run `terraform apply`
