@@ -3,67 +3,6 @@ provider "google" {
   project     = "${var.project}"
   region      = "${var.region}"
 }
-variable "region" {
-  description = "Region of GCE resources"
-  default     = "us-central1"
-}
-
-variable "region_zone" {
-  description = "Region and Zone of GCE resources"
-  default     = "us-central1-a"
-}
-
-# Change name of project to one that you have either created or have already
-variable "project" {
-	 description = "Name of GCE project"
-   default     = "yourproject"
-}
-
-variable "machine_type" {
-	description = "Type of VM to be created"
-	default 		= "n1-standard-4"
-}
-variable "image" {
-	description = "Name of the OS image for compute instances"
-	default		  = "ubuntu-os-cloud/ubuntu-1804-bionic-v20190212a"
-}
-
-# You will need to create this json file via a Google Service account - export the service account key and rename as below
-variable "credentials_file_path" {
-  description = "Path to the JSON file used to describe your account credentials - service account"
-  default     = "terraform.json"
-}
-#Below is so we don't get any naming issues - change to anything you like
-variable "prefix" {
-  default = "yourname"
-}
-variable "rancher_version" {
-  default = "latest"
-}
-variable "count_agent_all_nodes" {
-  default = "1"
-}
-variable "count_agent_etcd_nodes" {
-  default = "0"
-}
-variable "count_agent_controlplane_nodes" {
-  default = "0"
-}
-variable "count_agent_worker_nodes" {
-  default = "0"
-}
-variable "admin_password" {
-  default = "admin"
-}
-variable "cluster_name" {
-  default = "quickstart"
-}
-variable "docker_version_server" {
-  default = "18.06"
-}
-variable "docker_version_agent" {
-  default = "18.06"
-}
 data "template_file" "userdata_server" {
   template = "${file("files/userdata_server")}"
 
@@ -97,10 +36,10 @@ resource "google_compute_firewall" "default" {
   target_tags   = ["rancher-fw-quikstart"]
 }
 resource "google_compute_instance" "rancherserver" {
-  name = "${var.prefix}-rancherserver"
-  machine_type = "${var.machine_type}" 
-  zone         = "${var.region_zone}"
-  tags         = ["rancher-fw-quikstart"]
+  name          = "${var.prefix}-rancherserver"
+  machine_type  = "${var.machine_type}" 
+  zone          = "${var.region_zone}"
+  tags          = ["rancher-fw-quikstart"]
   boot_disk {
     initialize_params {
        image = "${var.image}" // the operative system (and Linux flavour) that your machine will run
